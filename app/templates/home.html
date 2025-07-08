@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container text-center mt-5">
+  <!-- 🌙 Theme Toggle -->
+  <div class="d-flex justify-content-end">
+    <button id="home-theme-toggle" class="btn btn-outline-secondary mb-3" title="Toggle Dark Mode">🌙 Dark Mode</button>
+  </div>
+
+  <h1 class="text-primary fw-bold mb-3">Welcome to MealPrepMaster</h1>
+  <p class="lead mb-4">Your smart weekly meal planning assistant.</p>
+
+  <!-- Call to action -->
+  <div class="mb-4">
+    <a href="{{ url_for('auth.login') }}" class="btn btn-primary me-2">Login</a>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary">Register</a>
+  </div>
+
+  <!-- 👨‍🍳 Center Image -->
+  <div class="my-5">
+    <img src="{{ url_for('static', filename='css/images/chef-thinking.png') }}"
+         alt="Chef Illustration"
+         class="img-fluid"
+         style="max-width: 300px;">
+  </div>
+
+  <!-- Info Cards -->
+  <div class="row justify-content-center">
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-primary">📝 Smart Notes</h5>
+          <p class="card-text">Create, view, and summarize your meal notes.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-success">📋 Recipe Cards</h5>
+          <p class="card-text">Auto-generate and review your recipes easily.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-warning">📅 Meal Planner</h5>
+          <p class="card-text">Plan your weekly meals and stay consistent.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-info">🤖 AI Assistance</h5>
+          <p class="card-text">Use Gemini + Nutrition AI for suggestions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🌙 Dark mode toggle logic -->
+<script>
+  const homeToggle = document.getElementById('home-theme-toggle');
+  const body = document.body;
+
+  function setHomeThemeIcon() {
+    homeToggle.innerHTML = body.classList.contains('dark-mode') ? '🌞 Light Mode' : '🌙 Dark Mode';
+  }
+
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+  }
+
+  setHomeThemeIcon();
+
+  homeToggle?.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+    setHomeThemeIcon();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome, {{ current_user.name }}!</h2>
+<h4>Your Weekly Meal Plan</h4>
+
+<!-- Weekly Meal Plan Table -->
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Breakfast</th>
+      <th>Lunch</th>
+      <th>Dinner</th>
+      <th>Snack</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    {% for day, meals in weekly_plan.items() %}
+    <tr>
+      <td>{{ day }}</td>
+
+      {% for meal_type in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+  <td>
+    {{ meals[meal_type] or '—' }}
+    {% if meals[meal_type] %}
+      {% set lower_meal = meals[meal_type]|lower %}
+      {% if highlighted|select('in', lower_meal)|list %}
+        <span class="text-warning" title="This recipe may need improvement">⚠️</span>
+      {% endif %}
+    {% endif %}
+  </td>
+{% endfor %}
+
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<!-- Navigation Buttons -->
+<div class="mt-3">
+  <a class="btn btn-success me-2" href="{{ url_for('mealplan.plan') }}">Edit Meal Plan</a>
+  <a class="btn btn-outline-primary me-2 text-primary fw-semibold bg-white border-primary" href="{{ url_for('dashboard.edit_preferences') }}">
+    Edit Preferences
+  </a>
+   <a href="{{ url_for('ai.suggest') }}" class="btn btn-primary me-2">Generate Recipes with Gemini</a>
+  <a href="{{ url_for('ai.nutrition_tips') }}" class="btn btn-secondary">Get Nutrition Tips</a>
+  <a class="btn btn-info me-2" href="{{ url_for('recipes.view_recipes') }}">My Recipes</a>
+  <a class="btn btn-warning" href="{{ url_for('shopping.generate_list') }}">Generate Shopping List</a>
+</div>
+
+
+{% endblock %}

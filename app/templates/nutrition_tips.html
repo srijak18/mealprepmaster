@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h3 class="mb-4">Gemini Nutrition Feedback</h3>
+
+  <!-- Weekly Overview -->
+  <h5 class="mb-3">Your Weekly Plan Overview:</h5>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr><th>Day</th><th>Breakfast</th><th>Lunch</th><th>Snack</th><th>Dinner</th></tr>
+    </thead>
+    <tbody>
+      {% for day, meals in weekly_plan.items() %}
+      <tr>
+        <td>{{ day }}</td>
+        <td>{{ meals.breakfast or '—' }}</td>
+        <td>{{ meals.lunch or '—' }}</td>
+        <td>{{ meals.dinner or '—' }}</td>
+        <td>{{ meals.snack or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- AI Tips -->
+  {% if tips %}
+    <hr>
+    <h5 class="mt-4">Gemini's Personalized Advice:</h5>
+    <pre class="bg-light p-3 border rounded">{{ tips }}</pre>
+  {% endif %}
+</div>
+{% endblock %}

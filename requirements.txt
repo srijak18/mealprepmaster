@@ -1,0 +1,13 @@
+Flask==2.3.3
+Flask-Login==0.6.3
+Flask-SQLAlchemy==3.1.1
+python-dotenv==1.0.1
+requests==2.31.0
+psycopg2-binary==2.9.9
+# Only if you use Jinja macros for date/time formatting
+Babel==2.14.0
+Flask-WTF==1.1.1
+WTForms==3.1.2
+email_validator==2.1.1
+# For production deployment with Gunicorn
+gunicorn==21.2.0

@@ -1,0 +1,116 @@
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --nav-bg: #0d6efd;            /* blue header */
+  --nav-text: #ffffff;
+  --btn-primary-bg: #0d6efd;
+  --btn-primary-text: #ffffff;
+  --footer-bg: #0d6efd;
+  --footer-text: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #0d6efd;
+}
+
+body.dark-mode {
+  --bg-color: #000000;
+  --text-color: #f1f1f1;
+  --nav-bg: #001f3f;           /* dark blue header */
+  --nav-text: #ffffff;
+  --btn-primary-bg: #003366;
+  --btn-primary-text: #ffffff;
+  --footer-bg: #001f3f;
+  --footer-text: #ffffff;
+  --card-bg: #121212;
+  --card-border: #333333;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  flex: 1;
+  padding-bottom: 80px;
+}
+
+.navbar {
+  background-color: var(--nav-bg) !important;
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+  color: var(--nav-text) !important;
+}
+
+footer {
+  background-color: var(--footer-bg);
+  color: var(--footer-text);
+  text-align: center;
+  padding: 6px 0;
+  font-size: 0.75rem;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+body.dark-mode footer {
+  background-color: #0b1f33; /* Dark footer background */
+  color: #ffffff;           /* White text in dark mode */
+}
+
+
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.btn-outline-primary {
+  border-color: var(--btn-primary-bg);
+  color: var(--btn-primary-bg);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+#theme-toggle {
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  color: var(--nav-text);
+  cursor: pointer;
+}
+
+.nav-link {
+  padding: 8px 0;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    min-height: auto;
+    min-width: 100%;
+  }
+
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  footer {
+    font-size: 14px;
+  }
+}
+
+
+

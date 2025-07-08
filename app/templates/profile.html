@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Your Profile</h2>
+
+  <!-- ✅ Section 1: Profile Info -->
+  <form method="POST" enctype="multipart/form-data">
+
+    <div class="mb-3 text-center">
+      <img src="{% if user.profile_image %}
+                   {{ url_for('static', filename='uploads/' ~ user.profile_image) }}?t={{ timestamp }}
+                 {% else %}
+                   {{ url_for('static', filename='css/images/default.png') }}
+                 {% endif %}"
+           class="img-thumbnail mb-2"
+           style="width: 120px; height: 120px; object-fit: cover;"
+           alt="Profile Picture">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input type="text" class="form-control" name="name" value="{{ user.name }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Diet Type</label>
+      <select class="form-select" name="diet_type">
+        {% for option in ['vegetarian', 'vegan', 'non_vegetarian', 'keto', 'paleo'] %}
+          <option value="{{ option }}" {% if user.diet_type == option %}selected{% endif %}>
+            {{ option.replace('_', ' ').title() }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Preferred Cuisine</label>
+      <select class="form-select" name="cuisine">
+        {% for option in ['indian', 'italian', 'chinese', 'mexican', 'american'] %}
+          <option value="{{ option }}" {% if user.cuisine == option %}selected{% endif %}>
+            {{ option.title() }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Profile Image</label>
+      <input class="form-control" type="file" name="profile_image" accept="image/*">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-danger">Confirm Password to Save Changes</label>
+      <input type="password" class="form-control" name="password" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+  </form>
+
+  <hr class="my-5">
+
+  <!-- ✅ Section 2: Change Password -->
+  <form method="POST" action="{{ url_for('dashboard.change_password') }}">
+    <h4 class="mb-3">Change Password</h4>
+
+    <div class="mb-3">
+      <label class="form-label">Current Password</label>
+      <input type="password" class="form-control" name="current_password" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">New Password</label>
+      <input type="password" class="form-control" name="new_password" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Confirm New Password</label>
+      <input type="password" class="form-control" name="confirm_password" required>
+    </div>
+
+    <button type="submit" class="btn btn-outline-danger w-100">Change Password</button>
+  </form>
+</div>
+{% endblock %}

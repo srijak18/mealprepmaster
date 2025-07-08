@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-3">🛒 Weekly Shopping List</h3>
+
+{% if grouped_items %}
+  {% for category, items in grouped_items.items() %}
+    {% if items %}
+      <h5 class="mt-4">{{ category.capitalize() }}</h5>
+      <ul class="list-group mb-3">
+        {% for item in items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ item }}</span>
+          <input type="checkbox"
+                 class="form-check-input shopping-checkbox"
+                 data-item="{{ item }}"
+                 {% if checked_map[item] %}checked{% endif %}>
+        </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endfor %}
+
+  <div class="mt-4">
+    <button class="btn btn-outline-secondary me-2" onclick="copyList()">📋 Copy to Clipboard</button>
+    <button class="btn btn-outline-primary me-2" onclick="downloadPDF()">⬇️ Download PDF</button>
+    <button class="btn btn-outline-danger" onclick="clearChecked()">🧹 Clear All Checked</button>
+  </div>
+{% else %}
+  <p class="text-muted">No items found. Please add recipes to your weekly meal plan first.</p>
+{% endif %}
+
+{% if weekly_shopping %}
+  <hr class="mt-5 mb-4">
+  <h4 class="mb-3">Ingredients by Day & Meal</h4>
+
+  {% for day, meals in weekly_shopping.items() %}
+    <h5 class="text-primary mt-4">{{ day }}</h5>
+    <ul class="list-group mb-3">
+      {% for meal, items in meals.items() %}
+        <li class="list-group-item">
+          <strong>{{ meal.capitalize() }}:</strong>
+          {% if items %}
+            <span class="day-meal" data-day="{{ day }}" data-meal="{{ meal }}">{{ items | join(', ') }}</span>
+          {% else %}
+            <span class="text-muted">No ingredients</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+{% endif %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+function copyList() {
+  const items = Array.from(document.querySelectorAll('.shopping-checkbox')).map(el => {
+    const label = el.closest('li').querySelector('span').textContent;
+    return el.checked ? `[x] ${label}` : `[ ] ${label}`;
+  });
+  navigator.clipboard.writeText(items.join('\n')).then(() => alert("List copied!"));
+}
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let y = 10;
+
+  doc.setFontSize(16);
+  doc.text("Weekly Shopping List", 10, y);
+  y += 10;
+
+  const categories = document.querySelectorAll('h5');
+  categories.forEach(cat => {
+    const catName = cat.textContent.trim();
+    const items = Array.from(cat.nextElementSibling.querySelectorAll('.shopping-checkbox')).map(el => {
+      let label = el.closest('li').querySelector('span').textContent.trim();
+
+      // Clean up line breaks and weird formatting
+      label = label.replace(/\n/g, ' ').replace(/\s+/g, ' ');
+
+      return el.checked ? `[x] ${label}` : `[ ] ${label}`;
+    });
+
+    // Deduplicate items and remove empty ones
+    const uniqueItems = [...new Set(items.filter(item => item.trim() !== '[ ]'))];
+
+    if (uniqueItems.length === 0) return;
+
+    if (y > 270) { doc.addPage(); y = 10; }
+
+    doc.setFontSize(14);
+    doc.text(catName, 10, y); y += 8;
+
+    doc.setFontSize(12);
+    uniqueItems.forEach(item => {
+      if (y > 280) { doc.addPage(); y = 10; }
+      doc.text("- " + item, 12, y);
+      y += 7;
+    });
+    y += 5;
+  });
+
+  const meals = document.querySelectorAll('.day-meal');
+  if (meals.length > 0) {
+    if (y > 260) { doc.addPage(); y = 10; }
+    doc.setFontSize(14);
+    doc.text("Ingredients by Day & Meal", 10, y);
+    y += 10;
+
+    let currentDay = "";
+
+    meals.forEach(span => {
+      const day = span.dataset.day;
+      const meal = span.dataset.meal;
+      const items = span.textContent.split(',').map(i =>
+        i.replace(/\n/g, ' ').trim()
+      );
+
+      if (currentDay !== day) {
+        if (y > 270) { doc.addPage(); y = 10; }
+        doc.setFontSize(13);
+        doc.text(`🗓️ ${day}`, 10, y);
+        y += 8;
+        currentDay = day;
+      }
+
+      doc.setFontSize(12);
+      doc.text(`  🍽️ ${meal.charAt(0).toUpperCase() + meal.slice(1)}: ${items.join(', ')}`, 12, y);
+      y += 7;
+    });
+  }
+
+  doc.save("shopping_list.pdf");
+}
+
+
+document.querySelectorAll('.shopping-checkbox').forEach(checkbox => {
+  checkbox.addEventListener('change', function () {
+    const item = this.getAttribute('data-item');
+    const checked = this.checked;
+
+    fetch("{{ url_for('shopping.toggle_check') }}", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item: item, checked: checked })
+    }).then(res => {
+      if (!res.ok) {
+        alert("Error updating item state");
+      }
+    });
+  });
+});
+
+function clearChecked() {
+  fetch("{{ url_for('shopping.clear_checked') }}", {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' }
+  }).then(res => {
+    if (res.ok) {
+      location.reload();
+    } else {
+      alert("Failed to clear checked items.");
+    }
+  });
+}
+</script>
+{% endblock %}

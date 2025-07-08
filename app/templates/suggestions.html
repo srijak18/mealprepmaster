@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h3 class="mb-3">Gemini Recipe Suggestions</h3>
+
+  <!-- Error Message -->
+  {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ error }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+
+  <!-- Ingredient Form -->
+<form method="POST" class="mb-4">
+  <div class="mb-3">
+    <label for="meal_type" class="form-label">Select Meal Type:</label>
+    <select class="form-select" id="meal_type" name="meal_type" required>
+      <option value="">-- Select --</option>
+      <option value="breakfast">Breakfast</option>
+      <option value="lunch">Lunch</option>
+      <option value="snack">Snack</option>
+      <option value="dinner">Dinner</option>
+    </select>
+  </div>
+  <form method="POST" class="mb-4">
+  <div class="mb-3">
+    <label for="recipe_name" class="form-label">Enter a recipe name:</label>
+    <input type="text" class="form-control" name="recipe_name" placeholder="e.g., Palak Paneer, Grilled Chicken Salad">
+  </div>
+  <div class="mb-3">
+    <label for="ingredients" class="form-label">or Enter Ingredients:</label>
+    <textarea class="form-control" id="ingredients" name="ingredients" rows="3" placeholder="e.g., tomato, spinach, cheese" required></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">{{ generated and 'Generate Another Recipe' or 'Get Suggestions' }}</button>
+</form>
+
+
+  <!-- Suggestions Output -->
+  {% if suggestions %}
+    <hr>
+    <h5 class="mt-4">Gemini Suggestions:</h5>
+    <pre class="p-3 bg-light border rounded">{{ suggestions }}</pre>
+
+    <!-- Save Recipe Form -->
+    <form method="POST" action="{{ url_for('ai.save_recipe') }}" class="mt-3">
+      <input type="hidden" name="content" value="{{ suggestions }}">
+      <div class="mb-3">
+        <label for="title">Recipe Title:</label>
+        <input type="text" class="form-control" name="title" required placeholder="Give a name to this recipe">
+      </div>
+      <button type="submit" class="btn btn-success">Save Recipe</button>
+    </form>
+  {% endif %}
+</div>
+
+
+<script>
+  const ingredientsInput = document.getElementById('ingredients');
+  const recipeNameInput = document.querySelector('input[name="recipe_name"]');
+
+  ingredientsInput.addEventListener('input', () => {
+    recipeNameInput.disabled = ingredientsInput.value.trim() !== '';
+  });
+
+  recipeNameInput.addEventListener('input', () => {
+    ingredientsInput.disabled = recipeNameInput.value.trim() !== '';
+  });
+</script>
+
+
+{% endblock %}

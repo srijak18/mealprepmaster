@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Meal Planner</h2>
+
+<form method="post">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Day</th>
+        {% for meal in meal_types %}
+          <th>{{ meal.capitalize() }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for day in days %}
+        <tr>
+          <td>{{ day }}</td>
+          {% for meal in meal_types %}
+            <td>
+              <select name="{{ day }}_{{ meal }}" class="form-select scrollable-dropdown">
+                <option value="">-- Select --</option>
+                {% for recipe in recipes %}
+                  <option value="{{ recipe.id }}"
+                    {% if selected_recipes.get((day, meal)) == recipe.id|string %}selected{% endif %}>
+                    {{ recipe.title }}{% if not recipe.user_id %} (default){% endif %}
+                  </option>
+                {% endfor %}
+              </select>
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button class="btn btn-success" type="submit">Save Plan</button>
+</form>
+
+<!-- Scrollable dropdown CSS -->
+<style>
+  .scrollable-dropdown {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+</style>
+
+{% if nutrition_tips %}
+<div class="mb-4">
+  <h5>Previous Nutrition Tips:</h5>
+  <ul class="list-group">
+    {% for tip in nutrition_tips %}
+    <li class="list-group-item">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#tipModal{{ tip.id }}">
+         Tip from {{ tip.created_at.strftime('%b %d, %Y') }}
+      </a>
+    </li>
+
+    <!-- Modal -->
+    <div class="modal fade" id="tipModal{{ tip.id }}" tabindex="-1" aria-labelledby="tipLabel{{ tip.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="tipLabel{{ tip.id }}">Nutrition Tip ({{ tip.created_at.strftime('%b %d, %Y') }})</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="white-space: pre-line;">{{ tip.content }}</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<hr>
+<h5 class="mt-4">Previous Tips:</h5>
+<ul>
+  {% for tip in current_user.nutrition_tips %}
+    <li><small>{{ tip.created_at.strftime('%Y-%m-%d') }}</small>: {{ tip.content[:100] }}...</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

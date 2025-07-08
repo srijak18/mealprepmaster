@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Favorite Recipes</h3>
+{% if recipes %}
+  <ul class="list-group">
+    {% for recipe in recipes %}
+      <li class="list-group-item">
+        <h5>{{ recipe.title }}</h5>
+        <p><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
+        <p><strong>Instructions:</strong> {{ recipe.instructions }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>You haven't marked any recipes as favorite yet.</p>
+{% endif %}
+{% endblock %}

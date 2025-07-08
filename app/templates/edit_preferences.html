@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4">Edit Your Preferences</h2>
+  <form method="POST">
+
+    <div class="mb-3">
+      <label for="diet_type" class="form-label">Diet Type</label>
+      <select class="form-select" id="diet_type" name="diet_type">
+        {% for option in ['vegetarian', 'vegan', 'non_vegetarian', 'keto', 'paleo'] %}
+          <option value="{{ option }}" {% if selected_diet == option %}selected{% endif %}>
+            {{ option.replace('_', ' ').title() }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="cuisine" class="form-label">Preferred Cuisine</label>
+      <select class="form-select" id="cuisine" name="cuisine">
+        {% for option in ['indian', 'italian', 'chinese', 'mexican', 'american'] %}
+          <option value="{{ option }}" {% if selected_cuisine == option %}selected{% endif %}>
+            {{ option.title() }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Update Preferences</button>
+  </form>
+</div>
+{% endblock %}
